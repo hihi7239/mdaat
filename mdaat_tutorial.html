@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDAAT 연습 튜토리얼</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2eb;
+    --surface: #ffffff;
+    --surface2: #faf8f4;
+    --ink: #1a1612;
+    --ink2: #4a4540;
+    --ink3: #7a7570;
+    --accent: #c0392b;
+    --accent2: #e8d5b7;
+    --accent3: #2c6e49;
+    --border: #e0dbd0;
+    --shadow: rgba(26,22,18,0.08);
+    --tag-bg: #f0ebe0;
+    --score0: #e8f5e9;
+    --score0t: #2c6e49;
+    --score1: #e3f2fd;
+    --score1t: #1565c0;
+    --score2: #fff8e1;
+    --score2t: #f57f17;
+    --score3: #fce4ec;
+    --score3t: #c62828;
+    --score4: #f3e5f5;
+    --score4t: #6a1b9a;
+    --scoreNA: #f5f5f5;
+    --scoreNAt: #616161;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--ink);
+    color: #fff;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+    color: var(--accent2);
+  }
+  .logo span { color: #fff; }
+  nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  nav button {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.75);
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 0.82rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  nav button:hover, nav button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ── Page sections ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--ink);
+    color: #fff;
+    padding: 60px 24px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: 'MDAAT';
+    position: absolute;
+    font-size: 14rem;
+    font-family: 'DM Mono', monospace;
+    color: rgba(255,255,255,0.03);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .hero h1 em { color: var(--accent2); font-style: normal; }
+  .hero p {
+    color: rgba(255,255,255,0.65);
+    font-size: 1rem;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-secondary {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+
+  /* ── Score legend cards ── */
+  .legend-section {
+    max-width: 1100px;
+    margin: 40px auto 0;
+    padding: 0 24px;
+  }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 14px;
+  }
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  .score-card {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+  .score-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .score-card h3 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+  .score-card p { font-size: 0.78rem; color: var(--ink2); line-height: 1.5; }
+  .s0 { background: var(--score0); } .s0 .score-badge { color: var(--score0t); }
+  .s1 { background: var(--score1); } .s1 .score-badge { color: var(--score1t); }
+  .s2 { background: var(--score2); } .s2 .score-badge { color: var(--score2t); }
+  .s3 { background: var(--score3); } .s3 .score-badge { color: var(--score3t); }
+  .s4 { background: var(--score4); } .s4 .score-badge { color: var(--score4t); }
+  .sna { background: var(--scoreNA); } .sna .score-badge { color: var(--scoreNAt); }
+
+  /* ── Domain cards ── */
+  .domains-section {
+    max-width: 1100px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+  }
+  .domain-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px var(--shadow);
+  }
+  .domain-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .domain-header:hover { background: var(--surface2); }
+  .domain-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .domain-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    flex: 1;
+  }
+  .domain-header .item-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink3);
+    background: var(--tag-bg);
+    padding: 2px 8px;
+    border-radius: 100px;
+  }
+  .chevron {
+    font-size: 0.8rem;
+    color: var(--ink3);
+    transition: transform 0.25s;
+  }
+  .domain-card.open .chevron { transform: rotate(180deg); }
+  .domain-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .domain-card.open .domain-body { display: block; }
+  .domain-intro {
+    font-size: 0.88rem;
+    color: var(--ink2);
+    margin: 14px 0 16px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent2);
+  }
+  .item-list { list-style: none; }
+  .item-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+  .item-list li:last-child { border-bottom: none; }
+  .item-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    background: var(--tag-bg);
+    color: var(--ink3);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .item-name { font-weight: 500; }
+  .item-def {
+    margin-top: 5px;
+    color: var(--ink2);
+    font-size: 0.83rem;
+    padding-left: 28px;
+  }
+  .severity-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; padding-left: 28px; }
+  .sev-tag {
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 100px;
+    border: 1px solid;
+  }
+  .sev-severe { background: #fce4ec; color: #c62828; border-color: #ef9a9a; }
+  .sev-moderate { background: #fff8e1; color: #f57f17; border-color: #ffcc80; }
+  .sev-mild { background: #e8f5e9; color: #2c6e49; border-color: #a5d6a7; }
+  .tip-box {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: #e8f4fd;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: #1565c0;
+    border-left: 3px solid #42a5f5;
+  }
+  .tip-box strong { font-weight: 700; }
+
+  /* ── Scoring rule card ── */
+  .rule-section {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .rule-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .rule-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; }
+  .rule-card p, .rule-card li { font-size: 0.84rem; color: var(--ink2); }
+  .rule-card ul { padding-left: 16px; }
+  .rule-card li { margin-bottom: 4px; }
+  .example-block {
+    margin-top: 10px;
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    color: var(--ink2);
+  }
+  .example-block code {
+    font-family: 'DM Mono', monospace;
+    background: var(--tag-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* ── Quiz page ── */
+  .quiz-wrap {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 24px 60px;
+  }
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-bar {
+    width: 180px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--ink3);
+  }
+  .quiz-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 2px 12px var(--shadow);
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity:0; transform: translateY(12px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  .quiz-domain-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.08em;
+    background: var(--tag-bg);
+    color: var(--ink3);
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+  .scenario-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 8px;
+  }
+  .scenario-text {
+    background: var(--surface2);
+    border-left: 4px solid var(--accent2);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 18px;
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin-bottom: 22px;
+    line-height: 1.7;
+  }
+  .question-text {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: left;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: #fff5f5;
+  }
+  .choice-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--ink3);
+  }
+  .choice-btn.correct {
+    border-color: var(--accent3);
+    background: #e8f5e9;
+    color: var(--accent3);
+  }
+  .choice-btn.correct .choice-key { background: var(--accent3); color: #fff; }
+  .choice-btn.wrong {
+    border-color: var(--accent);
+    background: #fff0f0;
+    color: var(--accent);
+  }
+  .choice-btn.wrong .choice-key { background: var(--accent); color: #fff; }
+  .choice-btn:disabled { cursor: default; }
+
+  .feedback-box {
+    display: none;
+    margin-top: 20px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  .feedback-box.correct-fb { background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20; }
+  .feedback-box.wrong-fb { background: #fff0f0; border: 1px solid #ef9a9a; color: #7f0000; }
+  .feedback-box h4 { font-size: 0.92rem; margin-bottom: 6px; }
+  .feedback-box p { line-height: 1.6; }
+
+  .quiz-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .hint-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--ink3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .hint-btn:hover { background: var(--tag-bg); }
+  .next-btn {
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: none;
+  }
+  .next-btn:hover { opacity: 0.85; }
+  .hint-box {
+    display: none;
+    margin-top: 14px;
+    padding: 12px 15px;
+    background: #e8f4fd;
+    border-radius: 8px;
+    font-size: 0.83rem;
+    color: #1565c0;
+    border-left: 3px solid #42a5f5;
+    animation: fadeIn 0.2s;
+  }
+
+  /* ── Result ── */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .result-score-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: conic-gradient(var(--accent) var(--pct, 0%), var(--border) 0%);
+    position: relative;
+  }
+  .result-score-circle::after {
+    content: '';
+    position: absolute;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: var(--surface);
+  }
+  .result-score-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .result-score-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .result-score-label { font-size: 0.7rem; color: var(--ink3); }
+  .result-card h2 { font-family: 'Playfair Display', serif; font-size: 1.7rem; margin-bottom: 10px; }
+  .result-card p { color: var(--ink2); margin-bottom: 24px; }
+  .result-breakdown {
+    text-align: left;
+    margin: 20px 0 28px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .rb-header {
+    background: var(--surface2);
+    padding: 10px 16px;
+    font-size: 0.78rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--ink3);
+    letter-spacing: 0.08em;
+  }
+  .rb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 0.86rem;
+  }
+  .rb-qnum {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink3);
+    width: 30px;
+    flex-shrink: 0;
+  }
+  .rb-q { flex: 1; color: var(--ink2); font-size: 0.82rem; }
+  .rb-icon { font-size: 1rem; flex-shrink: 0; }
+
+  /* color domains */
+  .dc-constitutional { background: #fff3e0; }
+  .di-constitutional { background: #ff9800; color: #fff; }
+  .dc-cutaneous { background: #fce4ec; }
+  .di-cutaneous { background: #e91e63; color: #fff; }
+  .dc-skeletal { background: #e8eaf6; }
+  .di-skeletal { background: #3f51b5; color: #fff; }
+  .dc-gastrointestinal { background: #e8f5e9; }
+  .di-gastrointestinal { background: #4caf50; color: #fff; }
+  .dc-pulmonary { background: #e1f5fe; }
+  .di-pulmonary { background: #03a9f4; color: #fff; }
+  .dc-cardiovascular { background: #fce4ec; }
+  .di-cardiovascular { background: #f44336; color: #fff; }
+  .dc-muscle { background: #f3e5f5; }
+  .di-muscle { background: #9c27b0; color: #fff; }
+
+  /* ── responsive ── */
+  @media (max-width: 600px) {
+    .progress-bar { width: 100px; }
+    .quiz-card { padding: 20px; }
+    .result-card { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo"><span>MDAAT</span> / Tutorial</div>
+    <nav>
+      <button class="active" data-page="intro">개요</button>
+      <button data-page="domains">도메인 설명</button>
+      <button data-page="scoring">점수 체계</button>
+      <button data-page="quiz">연습문제</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════════════ INTRO ══════════════ -->
+<div id="page-intro" class="page active">
+  <div class="hero">
+    <h1>MDAAT<br><em>연습 튜토리얼</em></h1>
+    <p>Myositis Disease Activity Assessment Tool 사용법을 단계별로 익히고, 실제 임상 시나리오로 연습해보세요.</p>
+    <div class="hero-btns">
+      <button class="btn-primary">바로 연습하기 →</button>
+      <button class="btn-secondary">도메인 설명 보기</button>
+    </div>
+  </div>
+
+  <div class="legend-section">
+    <div class="section-label">점수 체계 (0–4 + NA)</div>
+    <div class="score-grid">
+      <div class="score-card s0">
+        <div class="score-badge">0</div>
+        <h3>Not present</h3>
+        <p>지난 4주 동안 해당 소견 없음</p>
+      </div>
+      <div class="score-card s1">
+        <div class="score-badge">1</div>
+        <h3>Improving</h3>
+        <p>이전 4주 대비 임상적으로 유의한 호전</p>
+      </div>
+      <div class="score-card s2">
+        <div class="score-badge">2</div>
+        <h3>Same</h3>
+        <p>유의한 호전도 악화도 없이 지속</p>
+      </div>
+      <div class="score-card s3">
+        <div class="score-badge">3</div>
+        <h3>Worse</h3>
+        <p>이전 4주 대비 임상적으로 유의한 악화</p>
+      </div>
+      <div class="score-card s4">
+        <div class="score-badge">4</div>
+        <h3>New</h3>
+        <p>지난 4주 내에 새로 발생한 소견</p>
+      </div>
+      <div class="score-card sna">
+        <div class="score-badge">NA</div>
+        <h3>Not assessable</h3>
+        <p>평가 불가 (검사 미시행 등)</p>
+      </div>
+    </div>
+
+    <div class="section-label">핵심 원칙</div>
+    <div class="rule-grid">
+      <div class="rule-card">
+        <h3>⏱ 평가 기간</h3>
+        <p>모든 항목은 <strong>최근 4주</strong>를 기준으로 이전 4주와 비교하여 평가합니다.</p>
+      </div>
+      <div class="rule-card">
+        <h3>🔁 가역성</h3>
+        <p>Disease activity는 <strong>잠재적으로 가역적인</strong> 소견이어야 합니다. 비가역적 손상(damage)은 활동성으로 채점하지 않습니다.</p>
+      </div>
+      <div class="rule-card">
+        <h3>🏥 원인 판단</h3>
+        <p>소견이 <strong>myositis 질병 과정</strong>으로 인한 것인지 임상적으로 판단해야 합니다. 다른 질환이나 치료에 의한 소견은 제외합니다.</p>
+      </div>
+      <div class="rule-card">
+        <h3>📊 계단식 채점</h3>
+        <p>새로운(4) 또는 악화된(3) activity가 있으면, <strong>덜 심한 카테고리도 같은 점수</strong>를 부여합니다. (예: severe new → moderate, mild도 모두 4)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DOMAINS ══════════════ -->
+<div id="page-domains" class="page">
+  <div style="max-width:1100px;margin:36px auto 0;padding:0 24px;">
+    <div class="section-label">7개 도메인 + 근육</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:24px;">도메인별 항목 설명</h2>
+  </div>
+  <div class="domains-section">
+
+    <!-- Constitutional -->
+    <div class="domain-card dc-constitutional">
+      <div class="domain-header" >
+        <div class="domain-icon di-constitutional">🌡️</div>
+        <h2>Constitutional</h2>
+        <span class="item-count">항목 1–3</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="domain-body">
+        <p class="domain-intro">전신 증상으로, 모두 다른 원인으로 설명되지 않아야 합니다. <strong>최대 점수 예: 중증 피로로 와상 상태 + 자가 간호 불가</strong></p>
+        <ul class="item-list">
+          <li>
+            <span class="item-num">1</span><span class="item-name">Pyrexia</span>
+            <div class="item-def">38°C 초과의 문서화된 발열</div>
+          </li>
+          <li>
+            <span class="item-num">2</span><span class="item-name">Weight loss</span>
+            <div class="item-def">비의도적으로 체중의 5% 이상 감소</div>
+          </li>
+          <li>
+            <span class="item-num">3</span><span class="item-name">Fatigue / Malaise / Lethargy</span>
+            <div class="item-def">다른 원인으로 설명되지 않으며 일상 활동을 방해할 만큼 심각한 피로</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Cutaneous -->
+    <div class="domain-card dc-cutaneous">
+      <div class="domain-header" >
+        <div class="domain-icon di-cutaneous">🩹</div>
+        <h2>Cutaneous</h2>
+        <span class="item-count">항목 4–12</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="domain-body">
+        <p class="domain-intro">피부 소견은 dermatomyositis에서 중요합니다. <strong>최대 점수 예: 근육·힘줄·뼈까지의 궤양, 광범위한 erythroderma</strong></p>
+        <ul class="item-list">
+          <li>
+            <span class="item-num">4</span><span class="item-name">Cutaneous ulceration</span>
+            <div class="item-def">dermatomyositis로 인한 진피 또는 그 이하 조직의 광범위한 손상</div>
+          </li>
+          <li>
+            <span class="item-num">5</span><span class="item-name">Erythroderma</span>
+            <div class="item-def">체표면 50% 이상을 침범하는 광범위한 융합성 홍반 (일조 노출 부위 + 비노출 부위 모두)</div>
+          </li>
+          <li>
+            <span class="item-num">6</span><span class="item-name">Panniculitis</span>
+            <div class="item-def">피하지방 염증으로 인한 압통성 홍반 또는 보라색 결절·함몰</div>
+          </li>
+          <li>
+            <span class="item-num">7</span><span class="item-name">Erythematous rashes</span>
+            <div class="item-def">malar rash, facial erythema, V-sign, shawl sign 등 다양한 홍반성 발진</div>
+            <div class="severity-tags">
+              <span class="sev-severe">7a: 이차 변화 동반 (미란/수포/괴사)</span>
+              <span class="sev-mild">7b: 이차 변화 없는 홍반</span>
+            </div>
+          </li>
+          <li>
+            <span class="item-num">8</span><span class="item-name">Heliotrope rash</span>
+            <div class="item-def">안검 또는 안와주위의 보라색·라일락색·홍반성 반점 (종종 안와주위 부종 동반)</div>
+          </li>
+          <li>
+            <span class="item-num">9</span><span class="item-name">Gottron's papules / sign</span>
+            <div class="item-def">관절 신전면의 홍반-보라색 구진·반·반점 (일부 인설 동반)</div>
+          </li>
+          <li>
+            <span class="item-num">10</span><span class="item-name">Periungual capillary changes</span>
+            <div class="item-def">조갑주위 모세혈관 확장 ± 혈관 소실 (육안 또는 이경으로 확인)</div>
+          </li>
+          <li>
+            <span class="item-num">11</span><span class="item-name">Alopecia</span>
+            <div class="item-def"></div>
+            <div class="severity-tags">
+              <span class="sev-moderate">11a: Diffuse — 비반흔성, 비홍반성, 광범위</span>
+              <span class="sev-mild">11b: Focal — 염증 부위의 인설·홍반 동반 국소 탈모</span>
+            </div>
+          </li>
+          <li>
+            <span class="item-num">12</span><span class="item-name">Mechanic's hands</span>
+            <div class="item-def">손가락 외측·손바닥 부위의 과각화·인설·균열 (자주 갈라짐)</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Skeletal -->
+    <div class="domain-card dc-skeletal">
+      <div class="domain-header" >
+        <div class="domain-icon di-skeletal">🦴</div>
+        <h2>Skeletal</h2>
+        <span class="item-count">항목 13–14</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="domain-body">
+        <p class="domain-intro"><strong>최대 점수 예: 심한 기능 손실로 와상 상태 + 자가 간호 불가</strong></p>
+        <ul class="item-list">
+          <li>
+            <span class="item-num">13</span><span class="item-name">Arthritis</span>
+            <div class="item-def">압통·열감·부종으로 표시되는 활동성 관절 염증</div>
+            <div class="severity-tags">
+              <span class="sev-severe">13a: Severe — 2개 이상 관절, ADL 보조 필요, 심각한 가동범위 소실</span>
+              <span class="sev-moderate">13b: Moderate — 1개 이상 관절, ADL 보조 불필요, 일부 가동범위 소실</span>
+              <span class="sev-mild">13c: Mild — 1개 이상 관절, 가동범위 소실 또는 ADL 영향 없음</span>
+            </div>
+          </li>
+          <li>
+            <span class="item-num">14</span><span class="item-name">Arthralgia</span>
+            <div class="item-def">염증 과정으로 인한 2개 이상 관절의 통증 (±강직) — arthritis와 달리 붓지 않음</div>
+          </li>
+        </ul>
+        <div class="tip-box"><strong>💡 구분 팁:</strong> Arthritis는 객관적 염증 소견(압통+열감or부종) 필요. Arthralgia는 통증만 있고 객관적 소견 없음.</div>
+      </div>
+    </div>
+
+    <!-- Gastrointestinal -->
+    <div class="domain-card dc-gastrointestinal">
+      <div class="domain-header" >
+        <div class="domain-icon di-gastrointestinal">🫁</div>
+        <h2>Gastrointestinal</h2>
+        <span class="item-count">항목 15–16</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="domain-body">
+        <p class="domain-intro"><strong>최대 점수 예: 수술 또는 중환자실 치료 필요한 복부 위기</strong></p>
+        <ul class="item-list">
+          <li>
+            <span class="item-num">15</span><span class="item-name">Dysphagia</span>
+            <div class="item-def">임상 증상 또는 barium swallow, manometry 등 객관적 검사로 확인된 삼킴·씹기·식사 곤란</div>
+            <div class="severity-tags">
+              <span class="sev-severe">15a: Moderate/Severe — 흡인성 폐렴·비강 역류·기도 보호 곤란</span>
+              <span class="sev-mild">15b: Mild — 간헐적 또는 무증상 (객관적 검사에서만 확인); 일반식 가능</span>
+            </div>
+            <div class="tip-box" style="margin-top:8px;"><strong>⚠️ 중요:</strong> 6개월 이상 안정적·불변의 dysphagia는 damage로 분류. 가역성 증거 없으면 activity로 채점 안 함.</div>
+          </li>
+          <li>
+            <span class="item-num">16</span><span class="item-name">Abdominal pain</span>
+            <div class="item-def">myositis 질병 과정과 관련된 복통</div>
+            <div class="severity-tags">
+              <span class="sev-severe">16a: Severe — 입원·치료·NPO 필요</span>
+              <span class="sev-moderate">16b: Moderate — 치료 필요, 입원·NPO 불필요</span>
+              <span class="sev-mild">16c: Mild — 중재 불필요, 기능 영향 없음</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Pulmonary -->
+    <div class="domain-card dc-pulmonary">
+      <div class="domain-header" >
+        <div class="domain-icon di-pulmonary">🫀</div>
+        <h2>Pulmonary</h2>
+        <span class="item-count">항목 17–19</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="domain-body">
+        <p class="domain-intro"><strong>최대 점수 예: 활동성 ILD 또는 호흡기 근육 약화로 인공호흡기 필요</strong></p>
+        <ul class="item-list">
+          <li>
+            <span class="item-num">17</span><span class="item-name">Respiratory muscle weakness (ILD 없이)</span>
+            <div class="item-def">내재성 폐 질환 없이 운동 시 호흡곤란 또는 폐기능검사에서 저호흡</div>
+            <div class="severity-tags">
+              <span class="sev-severe">17a: 안정 시 호흡곤란</span>
+              <span class="sev-mild">17b: 운동 시 호흡곤란</span>
+            </div>
+          </li>
+          <li>
+            <span class="item-num">18</span><span class="item-name">Active reversible ILD</span>
+            <div class="item-def">방사선·병리학적으로 기존 문서화된 경우만. 폐섬유화나 비가역 소견은 제외.</div>
+            <div class="severity-tags">
+              <span class="sev-severe">18a: ILD로 인한 호흡곤란·기침 (임상 평가)</span>
+              <span class="sev-moderate">18b: 흉부 X선/HRCT 이상 소견 또는 ground glass</span>
+              <span class="sev-mild">18c: PFT — FVC ≥10% 변화 또는 DLCO ≥15% 변화</span>
+            </div>
+            <div class="tip-box" style="margin-top:8px;"><strong>💡 채점 원칙:</strong> 지난 방문 이후 유의한 변화 없으면 → 2. 정상화 → 0. 임상적 호전이나 최근 영상/PFT 없으면 → NA</div>
+          </li>
+          <li>
+            <span class="item-num">19</span><span class="item-name">Dysphonia</span>
+            <div class="item-def">정상에서 벗어난 음성 질·공명·발음·말속도 변화</div>
+            <div class="severity-tags">
+              <span class="sev-severe">19a: Moderate/Severe — 지속적이거나 의사소통 방해</span>
+              <span class="sev-mild">19b: Mild — 간헐적, 의사소통 방해 없음</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Cardiovascular -->
+    <div class="domain-card dc-cardiovascular">
+      <div class="domain-header" >
+        <div class="domain-icon di-cardiovascular">❤️</div>
+        <h2>Cardiovascular</h2>
+        <span class="item-count">항목 20–23</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="domain-body">
+        <p class="domain-intro"><strong>최대 점수 예: ICU 치료 필요한 심근염·심낭염·중증 부정맥</strong></p>
+        <ul class="item-list">
+          <li>
+            <span class="item-num">20</span><span class="item-name">Pericarditis</span>
+            <div class="item-def">임상적 또는 EKG·심초음파로 정의된 심낭 염증</div>
+          </li>
+          <li>
+            <span class="item-num">21</span><span class="item-name">Myocarditis</span>
+            <div class="item-def">임상적 또는 심초음파·기타 객관적 검사로 확인된 심근 염증</div>
+          </li>
+          <li>
+            <span class="item-num">22</span><span class="item-name">Arrhythmia</span>
+            <div class="item-def">임상적 또는 EKG에서 확인된 불규칙 심박 (sinus tachycardia 제외)</div>
+            <div class="severity-tags">
+              <span class="sev-severe">22a: Severe — 증상 있고 치료·중재 필요</span>
+              <span class="sev-mild">22b: Other — 증상 있으나 중재 불필요</span>
+            </div>
+          </li>
+          <li>
+            <span class="item-num">23</span><span class="item-name">Sinus tachycardia</span>
+            <div class="item-def">성인 안정 시 심박수 &gt;100회/분 (소아는 연령 기준 정상 상한치 초과)</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Muscle -->
+    <div class="domain-card dc-muscle">
+      <div class="domain-header" >
+        <div class="domain-icon di-muscle">💪</div>
+        <h2>Muscle Disease Activity</h2>
+        <span class="item-count">항목 25–26</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="domain-body">
+        <p class="domain-intro">안정된 근육 위축·손상만 있는 환자에서는 활동성 근염에 기인하는 근력 약화만 채점합니다. <strong>최대 점수 예: 와상 상태 + 자가 간호 불가</strong></p>
+        <ul class="item-list">
+          <li>
+            <span class="item-num">25</span><span class="item-name">Myositis</span>
+            <div class="item-def">근력검사·기능평가·검사실 소견 등으로 확인된 근육 염증</div>
+            <div class="severity-tags">
+              <span class="sev-severe">25a: Severe — ADL 보조 필요 + 심한 기능 손실</span>
+              <span class="sev-moderate">25b: Moderate — ADL 보조 불필요, 일부 기능 손실</span>
+              <span class="sev-mild">25c: Mild — 기능 손실 거의 없음</span>
+            </div>
+          </li>
+          <li>
+            <span class="item-num">26</span><span class="item-name">Myalgia</span>
+            <div class="item-def">근육 통증 또는 압통</div>
+          </li>
+        </ul>
+        <div class="tip-box"><strong>💡 계단식 채점 예시:</strong> 지난 4주 내 새로 발생한 moderate myositis → 25b=4, 25c=4 (덜 심한 카테고리도 동일 점수)</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════ SCORING ══════════════ -->
+<div id="page-scoring" class="page">
+  <div class="rule-section">
+    <div class="section-label">채점 방법 상세</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:24px;">점수 체계 심화</h2>
+    <div class="rule-grid">
+      <div class="rule-card">
+        <h3>🪜 계단식 채점 (Cascading scoring)</h3>
+        <p>새로운(4) 또는 악화된(3) activity가 있으면 덜 심한 subcategory도 같은 점수를 부여합니다.</p>
+        <div class="example-block">
+          <strong>예시 1:</strong><br>
+          지난 4주 내 새로 발생한 <code>moderate myositis</code><br>
+          → 25b (moderate) = <code>4</code><br>
+          → 25c (mild) = <code>4</code>
+        </div>
+        <div class="example-block" style="margin-top:8px;">
+          <strong>예시 2:</strong><br>
+          severe myositis가 지난 4주 악화<br>
+          → 25a = <code>3</code>, 25b = <code>3</code>, 25c = <code>3</code>
+        </div>
+      </div>
+      <div class="rule-card">
+        <h3>📈 호전 시 채점</h3>
+        <p>지난 달 severe → 이번에 moderate로 호전된 경우</p>
+        <div class="example-block">
+          → 25a (severe) = <code>1</code> (Improving)<br>
+          → 25b, 25c = <code>1</code> 또는 <code>2</code><br>
+          (얼마나 호전됐는지에 따라 판단)
+        </div>
+        <div class="example-block" style="margin-top:8px;">
+          다음 달 추가 호전 시:<br>
+          → 25a = <code>0</code>, 25b, 25c = <code>1</code>
+        </div>
+      </div>
+      <div class="rule-card">
+        <h3>⚕️ Dysphagia 특수 규칙</h3>
+        <p>6개월 이상 안정적·불변의 dysphagia는 <strong>damage</strong>로 분류합니다.</p>
+        <ul style="margin-top:8px;">
+          <li>가역성의 증거가 없으면 activity score 부여 안 함</li>
+          <li>단, 가역성 증거가 있으면 activity로 채점 가능</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>🫁 ILD PFT 기준</h3>
+        <p>유의한 PFT 변화의 기준:</p>
+        <ul style="margin-top:8px;">
+          <li>FVC ≥ <strong>10%</strong> 변화 (성인 최소 200mL)</li>
+          <li>DLCO ≥ <strong>15%</strong> 변화 (성인 최소 3mL/min/mmHg)</li>
+        </ul>
+        <p style="margin-top:8px; font-size:0.8rem; color:var(--ink3);">절대값 기준 변화율임을 주의. 증상 악화·영상 소견과 함께 해석.</p>
+      </div>
+      <div class="rule-card">
+        <h3>📏 VAS 평가</h3>
+        <p>각 장기 시스템별 + 전체 global VAS를 0–10cm로 표시합니다.</p>
+        <ul style="margin-top:8px;">
+          <li>왼쪽 끝 = disease activity 없음</li>
+          <li>중간 = moderate disease activity</li>
+          <li>오른쪽 끝 = 극심하거나 최대 disease activity</li>
+        </ul>
+        <p style="margin-top:8px; font-size:0.8rem; color:var(--ink3);">Extramuscular Global Assessment는 IMACS Core Set Measure로 근육 제외한 모든 장기 통합 평가입니다.</p>
+      </div>
+      <div class="rule-card">
+        <h3>🎯 NA vs 0 구분</h3>
+        <p>평가가 불가능한 경우 NA를 사용합니다.</p>
+        <ul style="margin-top:8px;">
+          <li><code>0</code>: 지난 4주 내 해당 소견 없음 (확인됨)</li>
+          <li><code>NA</code>: 평가 자체가 불가능 (검사 미시행, 임상 정보 부족 등)</li>
+        </ul>
+        <div class="example-block" style="margin-top:8px;">
+          PFT 미시행 → 18c = <code>NA</code><br>
+          최근 흉부 X선 없고 임상적 호전 → 18b = <code>NA</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div id="page-quiz" class="page">
+  <div class="quiz-wrap" id="quiz-container">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<script>
+// ── Navigation ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('active'); });
+  var target = document.getElementById('page-' + id);
+  if (target) target.classList.add('active');
+  var btn = document.querySelector('nav button[data-page="' + id + '"]');
+  if (btn) btn.classList.add('active');
+  if (id === 'quiz') renderCurrentQuiz();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ── Domain toggle ──
+function toggleDomain(header) {
+  const card = header.closest('.domain-card');
+  card.classList.toggle('open');
+}
+
+// ══════════════════════════════
+// QUIZ DATA
+// ══════════════════════════════
+const quizzes = [
+  {
+    domain: 'Muscle',
+    scenario: `65세 남성 dermatomyositis 환자. 지난 방문(4주 전)까지는 독립적으로 생활하였으나, 최근 4주 동안 근력이 급격히 약화되어 현재는 혼자 옷 입기, 화장실 이용이 어렵고 일어서기 위해 보호자의 도움이 필요합니다. CK도 유의하게 상승하였습니다. 4주 전까지 mild myositis만 있었습니다.`,
+    question: '25a (Severe muscle inflammation), 25b (Moderate), 25c (Mild)를 각각 어떻게 채점해야 할까요?',
+    choices: [
+      '25a=4, 25b=4, 25c=4',
+      '25a=4, 25b=2, 25c=2',
+      '25a=4, 25b=0, 25c=0',
+      '25a=3, 25b=3, 25c=3',
+    ],
+    answer: 0,
+    hint: '이전에 mild myositis만 있었고, 이번에 새로 severe myositis가 발생했습니다. 계단식 채점 규칙을 적용해보세요.',
+    feedback: '정답입니다! 지난 4주 내 새로 발생한(New) severe myositis이므로 25a=4. 계단식 채점 규칙에 의해 덜 심한 카테고리인 25b(moderate)와 25c(mild)도 모두 4로 채점합니다.',
+    wrongFeedback: '계단식 채점 규칙을 적용해야 합니다. 새로운(4) 또는 악화된(3) activity가 있으면, 덜 심한 모든 subcategory도 동일 점수를 부여합니다. Severe가 새로 발생했으므로 25a=4이고, 25b와 25c도 4입니다.',
+  },
+  {
+    domain: 'Pulmonary',
+    scenario: `52세 여성 polymyositis 환자. 기존에 ILD가 진단되어 있고 HRCT에서 ground glass 소견이 있었습니다. 지난 4주 동안 호흡곤란이 없고 기침도 없습니다. 최근 흉부 X선에서 변화 없음이 확인되었고, PFT는 지난 방문 이후 시행하지 않았습니다.`,
+    question: '18a(호흡곤란/기침), 18b(흉부영상), 18c(PFT)를 각각 어떻게 채점해야 할까요?',
+    choices: [
+      '18a=0, 18b=2, 18c=NA',
+      '18a=0, 18b=0, 18c=NA',
+      '18a=2, 18b=2, 18c=2',
+      '18a=0, 18b=NA, 18c=NA',
+    ],
+    answer: 0,
+    hint: '18a는 임상적으로 답할 수 있고, 18b는 최근 영상이 있으며, 18c는 PFT가 시행되지 않았습니다.',
+    feedback: '정답입니다! 18a: 호흡곤란·기침 없으므로 0. 18b: 최근 흉부 X선에서 변화 없으므로 Same(2). 18c: PFT 미시행으로 평가 불가이므로 NA.',
+    wrongFeedback: '각 항목을 개별적으로 평가해야 합니다. 18a는 증상으로 임상 판단→호흡곤란 없으므로 0. 18b는 최근 영상에서 변화 없음→Same=2. 18c는 PFT 미시행→NA.',
+  },
+  {
+    domain: 'Gastrointestinal',
+    scenario: `38세 여성 dermatomyositis 환자. 8개월 전부터 mild dysphagia가 있어왔고, 4주 전 방문 시에도 동일한 수준이었습니다. 환자는 일반식을 먹을 수 있으며 증상의 변화가 없습니다. 이 dysphagia는 처음 진단 이후 일관되게 동일한 수준을 유지하고 있으며 가역성의 증거가 없습니다.`,
+    question: '15b (Mild dysphagia)를 어떻게 채점해야 할까요?',
+    choices: [
+      '2 (Same) — 변화 없이 지속',
+      '0 (Not present) — damage로 간주하여 activity 채점 안 함',
+      '4 (New) — 4주 전에도 있었으므로 계속 기록',
+      'NA — 객관적 검사 미시행',
+    ],
+    answer: 1,
+    hint: 'MDAAT 글로시에서 dysphagia에 대한 특수 규칙을 확인해보세요. 6개월 이상 안정적 dysphagia에 대한 지침이 있습니다.',
+    feedback: '정답입니다! 6개월 이상 안정적·불변의 dysphagia는 damage 항목으로 분류되어 activity score를 부여하지 않습니다. 가역성의 증거가 없으므로 activity로 채점하지 않으며, 0으로 표시하거나 damage 항목에 기록합니다.',
+    wrongFeedback: 'MDAAT 글로시에 의하면, 6개월 이상 안정적·불변의 dysphagia는 damage 항목이며 가역성 증거 없이는 activity로 채점하지 않습니다. 따라서 activity score를 부여하지 않으며, 0으로 처리합니다.',
+  },
+  {
+    domain: 'Cutaneous',
+    scenario: `44세 남성 dermatomyositis 환자. 4주 전 방문 시 양측 손가락 신전면에 Gottron's papules이 새로 발생했었습니다(당시 score=4). 이번 방문 시 Gottron's papules이 유의하게 줄어들었고 경미하게만 남아있습니다.`,
+    question: '이번 방문에서 항목 9 (Gottron's papules/sign)를 어떻게 채점해야 할까요?',
+    choices: [
+      '1 (Improving)',
+      '2 (Same)',
+      '4 (New)',
+      '0 (Not present)',
+    ],
+    answer: 0,
+    hint: '이전 4주 대비 임상적으로 유의하게 호전된 경우 어떤 점수를 부여하나요?',
+    feedback: '정답입니다! 지난 방문(4주 전)에 비해 Gottron\'s papules이 임상적으로 유의하게 줄어들었으므로, Improving=1로 채점합니다.',
+    wrongFeedback: '이전 4주 대비 임상적으로 유의한 호전이 있었으므로 1(Improving)이 정답입니다. "Same"은 유의한 변화 없을 때, "New"는 이전에 없다가 새로 발생했을 때 사용합니다.',
+  },
+  {
+    domain: 'Skeletal',
+    scenario: `29세 여성 polymyositis 환자. 지난 4주 동안 양측 손목과 무릎에 열감과 부종, 압통이 있었습니다. 이로 인해 일부 일상 활동(컵 들기, 계단 오르기)에 제한이 있으나 혼자 생활하는 데 보조가 필요하지는 않습니다. 4주 전 방문 시에는 arthralgia만 있었고 arthritis 소견은 없었습니다.`,
+    question: '13a (Severe arthritis), 13b (Moderate arthritis), 13c (Mild arthritis)를 각각 어떻게 채점해야 할까요?',
+    choices: [
+      '13a=0, 13b=4, 13c=4',
+      '13a=4, 13b=4, 13c=4',
+      '13a=0, 13b=4, 13c=2',
+      '13a=0, 13b=3, 13c=3',
+    ],
+    answer: 0,
+    hint: '현재 ADL 보조가 필요하지 않고 일부 기능 제한이 있습니다. 이는 어떤 severity에 해당할까요? 4주 전에는 없었습니다.',
+    feedback: '정답입니다! 2개 이상 관절에 arthritis가 있고 일부 기능 제한이 있으나 ADL 보조는 불필요하므로 Moderate (13b)에 해당합니다. 4주 전에는 없었으므로 New=4. 계단식 채점으로 13c도 4. Severe는 해당 안 되므로 13a=0.',
+    wrongFeedback: '이 환자의 arthritis는 ADL 보조가 필요하지 않고 일부 기능 제한이 있으므로 Moderate category에 해당합니다. 새로 발생했으므로 13b=4, 계단식 채점으로 13c=4, severe category 해당 없으므로 13a=0.',
+  },
+  {
+    domain: 'Constitutional',
+    scenario: `57세 남성 dermatomyositis 환자. 4주 전 방문 시 체온 38.5°C의 발열이 문서화되어 pyrexia score=4였습니다. 이번 방문에서는 발열이 없으며 CRP도 정상입니다. 4주 전 발열은 myositis 악화와 관련된 것으로 판단되었습니다.`,
+    question: '항목 1 (Pyrexia)을 이번 방문에서 어떻게 채점해야 할까요?',
+    choices: [
+      '0 (Not present) — 지난 4주 동안 발열 없음',
+      '1 (Improving) — 이전보다 나아짐',
+      '2 (Same) — 지난 방문에 있었으므로',
+      '4 (New) — 여전히 모니터링 필요',
+    ],
+    answer: 0,
+    hint: '점수 0의 정의: "지난 4주 동안 해당 소견이 없음"을 기억하세요.',
+    feedback: '정답입니다! 지난 4주 동안 발열(38°C 초과)이 없었으므로 0(Not present)입니다. 이전 방문에서 있었더라도 현재 4주 기간에 없으면 0입니다.',
+    wrongFeedback: '0(Not present)이 정답입니다. MDAAT는 "최근 4주"를 평가 기간으로 합니다. 지난 4주 동안 38°C 초과 발열이 문서화되지 않았으므로 0입니다. 1(Improving)은 해당 소견이 있되 호전된 경우에 사용합니다.',
+  },
+  {
+    domain: 'Cardiovascular',
+    scenario: `71세 여성 polymyositis 환자. 이번 방문에서 심전도(EKG) 시행 결과 심방세동(atrial fibrillation)이 새로 발견되었습니다. 환자는 약간의 두근거림을 호소하나 어지럼증이나 실신은 없고, 치료가 필요한지 심장내과에 의뢰 예정입니다. 아직 치료 결정은 나지 않은 상태입니다.`,
+    question: '22a (Severe arrhythmia)와 22b (Other arrhythmia)를 각각 어떻게 채점해야 할까요?',
+    choices: [
+      '22a=0, 22b=4',
+      '22a=4, 22b=4',
+      '22a=4, 22b=0',
+      '22a=NA, 22b=4',
+    ],
+    answer: 0,
+    hint: 'Severe arrhythmia의 정의: 증상이 있고 치료 또는 중재가 필요한 경우. 현재 환자는 치료가 결정되지 않았습니다.',
+    feedback: '정답입니다! 심방세동이 새로 발생(New=4)하여 22b=4. 환자는 증상(두근거림)이 있으나 치료 결정이 나지 않은 상태이므로 "치료/중재가 필요한 severe arrhythmia" 기준을 현재 충족하지 않아 22a=0입니다.',
+    wrongFeedback: '22b=4(새로운 arrhythmia로 증상 있음)가 맞습니다. Severe arrhythmia(22a)는 "증상이 있고 치료 또는 중재가 필요한 경우"인데, 아직 치료가 결정되지 않았으므로 22a=0이 적절합니다.',
+  },
+  {
+    domain: 'Muscle',
+    scenario: `48세 남성 dermatomyositis 환자. 3개월 전 severe myositis로 ADL 보조가 필요했습니다. 4주 전 방문(1개월 전)에는 moderate myositis 수준으로 호전되어 ADL 보조가 불필요해졌습니다. 이번 방문에서도 비슷한 moderate 수준으로 추가 호전은 없습니다.`,
+    question: '25a(Severe), 25b(Moderate), 25c(Mild)를 각각 어떻게 채점해야 할까요?',
+    choices: [
+      '25a=0, 25b=2, 25c=2',
+      '25a=1, 25b=2, 25c=2',
+      '25a=0, 25b=1, 25c=1',
+      '25a=0, 25b=2, 25c=1',
+    ],
+    answer: 0,
+    hint: '이번 4주 기간에 severe myositis가 있었나요? Moderate는 4주 전과 비교해서 어떤가요?',
+    feedback: '정답입니다! 현재 4주 동안 severe myositis 소견 없음 → 25a=0. Moderate 수준이 4주 전과 유의한 변화 없이 지속 → 25b=2(Same). Mild category도 현재 있고 변화 없음 → 25c=2(Same).',
+    wrongFeedback: '이번 4주 기간에 severe myositis가 없으므로 25a=0. Moderate myositis가 유의한 변화 없이 지속되므로 25b=2(Same). 25c도 mild 수준이 지속 → 2(Same). 1(Improving)은 이전보다 유의하게 호전된 경우입니다.',
+  },
+];
+
+// ── Quiz state ──
+let currentQ = 0;
+let score = 0;
+let answered = [];
+let showResult = false;
+
+function renderCurrentQuiz() {
+  const container = document.getElementById('quiz-container');
+  if (showResult) { renderResult(container); return; }
+
+  const q = quizzes[currentQ];
+  const pct = ((currentQ) / quizzes.length * 100).toFixed(0);
+  const choiceKeys = ['A','B','C','D'];
+
+  container.innerHTML = `
+    <div class="quiz-header">
+      <div class="quiz-title">연습문제</div>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-text">${currentQ+1} / ${quizzes.length}</div>
+      </div>
+    </div>
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-domain-tag">${q.domain}</div>
+      <div class="scenario-label">임상 시나리오</div>
+      <div class="scenario-text">${q.scenario}</div>
+      <div class="question-text">Q. ${q.question}</div>
+      <div class="choices" id="choices">
+        ${q.choices.map((c,i) => `
+          <button class="choice-btn" onclick="selectChoice(${i})" id="choice-${i}">
+            <span class="choice-key">${choiceKeys[i]}</span>
+            <span>${c}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="hint-box" id="hint-box">💡 <strong>힌트:</strong> ${q.hint}</div>
+      <div class="feedback-box" id="feedback-box"></div>
+      <div class="quiz-actions">
+        <button class="hint-btn" id="hint-btn" onclick="toggleHint()">💡 힌트 보기</button>
+        <button class="next-btn" id="next-btn" onclick="nextQ()">${currentQ < quizzes.length-1 ? '다음 문제 →' : '결과 보기 →'}</button>
+      </div>
+    </div>
+  `;
+}
+
+function selectChoice(idx) {
+  const q = quizzes[currentQ];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback-box');
+  const nextBtn = document.getElementById('next-btn');
+
+  if (idx === q.answer) {
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback-box correct-fb';
+    fb.innerHTML = `<h4>✅ 정답입니다!</h4><p>${q.feedback}</p>`;
+    score++;
+    answered.push({correct: true, q: q.question.substring(0,40)+'...'});
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.answer].classList.add('correct');
+    fb.className = 'feedback-box wrong-fb';
+    fb.innerHTML = `<h4>❌ 오답입니다.</h4><p>${q.wrongFeedback}</p>`;
+    answered.push({correct: false, q: q.question.substring(0,40)+'...'});
+  }
+  fb.style.display = 'block';
+  nextBtn.style.display = 'block';
+  document.getElementById('hint-btn').style.display = 'none';
+}
+
+function toggleHint() {
+  const box = document.getElementById('hint-box');
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+function nextQ() {
+  if (currentQ < quizzes.length - 1) {
+    currentQ++;
+    renderCurrentQuiz();
+  } else {
+    showResult = true;
+    renderCurrentQuiz();
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderResult(container) {
+  const pct = Math.round(score / quizzes.length * 100);
+  const deg = Math.round(pct * 3.6);
+  const msg = pct === 100 ? '완벽합니다! 🎉' : pct >= 70 ? '잘 하셨습니다! 👏' : '더 연습해봐요! 📚';
+  const sub = pct === 100 ? 'MDAAT 전문가 수준입니다.' : pct >= 70 ? '기본 개념을 잘 이해하고 있습니다.' : '도메인 설명을 다시 복습하고 재도전해보세요.';
+
+  container.innerHTML = `
+    <div class="quiz-header">
+      <div class="quiz-title">결과</div>
+    </div>
+    <div class="result-card">
+      <div class="result-score-circle" style="--pct:${pct * 3.6}deg; background: conic-gradient(var(--accent) ${pct * 3.6}deg, var(--border) 0%);">
+        <div class="result-score-inner">
+          <div class="result-score-num">${score}/${quizzes.length}</div>
+          <div class="result-score-label">${pct}%</div>
+        </div>
+      </div>
+      <h2>${msg}</h2>
+      <p>${sub}</p>
+      <div class="result-breakdown">
+        <div class="rb-header">문항별 결과</div>
+        ${answered.map((a,i) => `
+          <div class="rb-row">
+            <span class="rb-qnum">Q${i+1}</span>
+            <span class="rb-q">${a.q}</span>
+            <span class="rb-icon">${a.correct ? '✅' : '❌'}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="resetQuiz()">처음부터 다시 풀기</button>
+        <button id="go-domains-btn" class="btn-secondary" style="background:transparent;border:1px solid var(--border);color:var(--ink);padding:12px 24px;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:0.95rem;">도메인 복습하기</button>
+      </div>
+    </div>
+  `;
+  var gdb = document.getElementById('go-domains-btn');
+  if (gdb) gdb.addEventListener('click', function() { showPage('domains'); });
+}
+
+function resetQuiz() {
+  currentQ = 0;
+  score = 0;
+  answered = [];
+  showResult = false;
+  renderCurrentQuiz();
+}
+
+// ── Bind all navigation on DOM ready ──
+document.addEventListener('DOMContentLoaded', function() {
+  // Nav buttons
+  document.querySelectorAll('nav button[data-page]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      showPage(btn.getAttribute('data-page'));
+    });
+  });
+  // Hero buttons with onclick still work, but also wire data-nav buttons if any
+  document.querySelectorAll('button[data-nav]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      showPage(btn.getAttribute('data-nav'));
+    });
+  });
+  // Wire remaining onclick buttons explicitly
+  var heroQuizBtn = document.querySelector('.hero-btns .btn-primary');
+  var heroDomainBtn = document.querySelector('.hero-btns .btn-secondary');
+  if (heroQuizBtn) heroQuizBtn.addEventListener('click', function() { showPage('quiz'); });
+  if (heroDomainBtn) heroDomainBtn.addEventListener('click', function() { showPage('domains'); });
+
+  // Domain toggles
+  document.querySelectorAll('.domain-header').forEach(function(header) {
+    header.addEventListener('click', function() { toggleDomain(header); });
+  });
+
+  // Initial quiz render
+  renderCurrentQuiz();
+});
+</script>
+</body>
+</html>
